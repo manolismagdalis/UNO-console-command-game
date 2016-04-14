@@ -1,7 +1,7 @@
 # UNO-console-command-game
 
 
-@author: Emmanouil Magdalis
+# author: Emmanouil Magdalis
 
 @version: 1.0.0
 

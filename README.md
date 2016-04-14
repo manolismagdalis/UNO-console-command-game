@@ -3,7 +3,7 @@
 
 # author: Emmanouil Magdalis
 
-@version: 1.0.0
+# version: 1.0.0
 
 
 A version of the famous UNO game. 

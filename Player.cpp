@@ -96,10 +96,29 @@ bool Player::freedom_of_choice(bool * check, Deck * deck, Hand ** player, int * 
         std::cout << "What do you want to do? (1) Play a card, (2) Draw a card ? ";
         std::cin >> j;
         std::cout << std::endl;
-
+        std::vector<Card>::iterator v = vec.begin();
+        
         switch (j)
         {
-            case 1: return true;
+            case 1:
+                {
+	                while (v!=vec.end())
+	                    {
+		                    if (v->collor==playedCard.color || v->number==playedCard.number)
+			                    {
+				                    return true;
+			                    }
+		                    else
+			                    {
+				                    std::cout << "There is no valid card in your hand to play. So, you draw a card"
+				                    draw_a_card(deck->remove_card());
+                		            std::cout << "Now, your cards are the following: " << std::endl;
+                		            show_cards();
+                		            f=false;
+                            		break;
+			                    }
+	                    }
+                } 
             case 2:
             {
                 draw_a_card(deck->remove_card());
@@ -115,11 +134,27 @@ bool Player::freedom_of_choice(bool * check, Deck * deck, Hand ** player, int * 
 
     std::cin >> j;
     std::cout << std::endl;
-
+    v=vec.begin();
 
     switch (j)
     {
-        case 1: return true;
+        case 1:
+            {
+    	        while (v!=vec.end())
+	                {
+		                if (v->collor==playedCard.color || v->number==playedCard.number)
+			                {
+				                return true;
+			                }
+		                else
+			                {
+				                std::cout << "There is no valid card in your hand to play. So, you pass"
+				                if (*rot==1) *player=(*player)->next;
+				                else *player=(*player)->prev;
+	    			            return false;
+			                }
+	                }
+            }
         case 2:          // In this case, the player drew a card and still has no cards to play, so he is forced to pass.
         {
             if (*rot==1) *player=(*player)->next;

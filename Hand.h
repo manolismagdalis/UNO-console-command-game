@@ -17,6 +17,7 @@ class Hand: public Container
 
         virtual void play_a_card(Card, Deck *)=0;
         virtual Card * check_before_playing_card(int *, bool *, Deck *)=0;
+        virtual Card * can_pc_play (Card)=0;
         virtual bool freedom_of_choice(bool *, Deck *, Hand **, int *)=0;
         virtual int choose_what_color()=0;
 };

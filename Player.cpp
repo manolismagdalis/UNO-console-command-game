@@ -91,6 +91,10 @@ bool Player::freedom_of_choice(bool * check, Deck * deck, Hand ** player, int * 
 
     bool f=true;
     int j;
+    Card temp=deck->opened.back();
+    Card * n = new Card;
+    n=can_pc_play(temp);
+    
     while (f)
     {
         std::cout << "What do you want to do? (1) Play a card, (2) Draw a card ? ";
@@ -99,7 +103,22 @@ bool Player::freedom_of_choice(bool * check, Deck * deck, Hand ** player, int * 
 
         switch (j)
         {
-            case 1: return true;
+            case 1: 
+            {
+                if (n!=NULL)
+                {
+                    return true;
+                }
+                else
+                {
+                    std::cout << "You have no valid card to play. You draw a card.";
+                    draw_a_card(deck->remove_card());
+                    std::cout << "Now, your cards are the following: " << std::endl;
+                    show_cards();
+                    f=false;
+                    break;
+                }
+            }                
             case 2:
             {
                 draw_a_card(deck->remove_card());
@@ -115,11 +134,24 @@ bool Player::freedom_of_choice(bool * check, Deck * deck, Hand ** player, int * 
 
     std::cin >> j;
     std::cout << std::endl;
-
+    n=can_pc_play(temp);
 
     switch (j)
     {
-        case 1: return true;
+        case 1: 
+        {
+            if (n!=NULL)
+            {
+                return true;
+            }
+            else
+            {
+                std::cout << "You have no valid card to play. You pass.";
+                if (*rot==1) *player=(*player)->next;
+                else *player=(*player)->prev;
+                return false;
+            }
+        }
         case 2:          // In this case, the player drew a card and still has no cards to play, so he is forced to pass.
         {
             if (*rot==1) *player=(*player)->next;
@@ -143,5 +175,65 @@ int Player::choose_what_color()
         else if (color=="blue") return 3;
         else if (color=="yellow") return 4;
         else std::cout << "No valid option! " << std::endl;
+    }
+}
+
+Card * Player::can_pc_play(Card playedCard)
+{
+    std::vector<Card>::iterator v=vec.begin();
+    std::vector<Card> candidates;  // A vector of candidate cards to be played, is created
+    int i=0;
+    while (v!=vec.end())
+    {
+        if (v->color==playedCard.color || v->number==playedCard.number)
+        {
+            candidates.push_back(*v);
+        }
+        v++;
+        i++;
+    }
+    // Now, the minimum card in candidates is found, if the candidates vector is not empty
+    Card * m = new Card;
+    m->color=6;
+    m->number=12;
+    v=candidates.begin();
+    i=0;
+    while (!candidates.empty() && v!=candidates.end())
+    {
+       if (v->number <= m->number)
+       {
+            m=&(*v);
+       }
+       v++;
+       i++;
+    }
+
+    if (i!=0)  // i!=0 means that the candidates vector has at least one card.
+    {
+        return m; // Whether the Card is of color 6 and number 12, is not a concern for now
+    }
+    else // if there are no candidates, a black card is searched instead.
+    {
+        v=vec.begin();
+        while (v!=vec.end())
+        {
+            if (v->number==13)
+            {
+                return &(*v);
+            }
+            v++;
+        }
+        v=vec.begin();
+        while (v!=vec.end())
+        {
+            if (v->number==14)
+            {
+                return &(*v);
+            }
+            v++;
+        }
+        // If the function has reached this point, it means that there are no candidates and no black
+        // cards in the Player's hand
+        return NULL;
     }
 }
